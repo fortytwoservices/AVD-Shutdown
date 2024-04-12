@@ -180,6 +180,13 @@ $email = @{
         toRecipients = @(
             $userSessionList
         )
+        # ccRecipients = @(
+        #     @{
+        #         emailAddress = @{
+        #             address = "test@fortytwo.io"
+        #         }
+        #     }
+        # )
     }
     saveToSentItems = "false"
 }
