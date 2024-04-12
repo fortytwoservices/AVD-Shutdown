@@ -43,21 +43,6 @@ $useManagedIdentity = $true
 $hostPoolList = [System.Collections.Generic.List[object]]::new()
 $userSessionList = [System.Collections.Generic.List[object]]::new()
 
-# Check that the incoming data is correct
-Write-Host "[INFO] Starting proccessing data.."
-if ($Request.rawbody.Length -gt 0) {
-    Write-Host "[INFO] There is data.."
-    try {
-        $shutdownData = $Request.rawbody | ConvertFrom-Json -Depth 10
-    }
-    catch {
-        Invoke-OutputBinding -ResponseCode 400 -returnBody "[ERROR] The data recieved is not in valid JSON format.. $($_.Exception.Message)"
-    }
-}
-else {
-    Invoke-OutputBinding -ResponseCode 400 -returnBody "[ERROR] There is NO data.."
-}
-
 # Function to set push output binding and exit.
 function Invoke-OutputBinding {
     param (
@@ -106,6 +91,21 @@ function Get-AccessToken {
         }
     }
     return $token
+}
+
+# Check that the incoming data is correct
+Write-Host "[INFO] Starting proccessing data.."
+if ($Request.rawbody.Length -gt 0) {
+    Write-Host "[INFO] There is data.."
+    try {
+        $shutdownData = $Request.rawbody | ConvertFrom-Json -Depth 10
+    }
+    catch {
+        Invoke-OutputBinding -ResponseCode 400 -returnBody "[ERROR] The data recieved is not in valid JSON format.. $($_.Exception.Message)"
+    }
+}
+else {
+    Invoke-OutputBinding -ResponseCode 400 -returnBody "[ERROR] There is NO data.."
 }
 
 # Get the access token for the Management API
@@ -197,20 +197,3 @@ catch {
 
 # Finished, return the number of users that the email was sent to and set the response code to 200 (HTTP OK)
 Invoke-OutputBinding -ResponseCode 200 -returnBody "Email sent to $($userSessionList.Count) users"
-
-# Sample data (use with i.e. postman)
-# {
-#     "skipUrl":"https://prod.skipdelay.vsdth.visualstudio.com/skip?vmName=vm-t-pn-avdsh&guid=8fdb99d6-ed59-4bef-ab6e-d34ed3b7e574&subscriptionId=3ba20510-asdf-asdf-asdf-1387bd4f7c8c&operation=skip",
-#     "delayUrl60":"https://prod.skipdelay.vsdth.visualstudio.com/delay?vmName=vm-t-pn-avdsh&guid=8fdb99d6-ed59-4bef-ab6e-d34ed3b7e574&subscriptionId=3ba20510-asdf-asdf-asdf-1387bd4f7c8c&timeDelay=60&operation=delay",
-#     "delayUrl120":"https://prod.skipdelay.vsdth.visualstudio.com/delay?vmName=vm-t-pn-avdsh&guid=8fdb99d6-ed59-4bef-ab6e-d34ed3b7e574&subscriptionId=3ba20510-asdf-asdf-asdf-1387bd4f7c8c&timeDelay=120&operation=delay",
-#     "vmName":"vm-t-avdsh",
-#     "guid":"8fdb99d6-ed59-4bef-ab6e-d34ed3b7e574",
-#     "owner":null,
-#     "vmUrl":"https://portal.azure.com/#resource/subscriptions/3ba20510-asdf-asdf-asdf-1387bd4f7c8c/resourceGroups/rg-t-avd/providers/Microsoft.Compute/virtualMachines/vm-t-avdsh",
-#     "minutesUntilShutdown":"30",
-#     "eventType":"AutoShutdown",
-#     "text":"Azure DevTest Labs notification: The resource vm-t-pn-avdsh in resource group rg-t-avd with subscription Id 3ba20510-asdf-asdf-asdf-1387bd4f7c8c is scheduled for automatic shutdown in 30 minutes. this auto-shutdown. . .",
-#     "subscriptionId":"3ba20510-asdf-asdf-asdf-1387bd4f7c8c",
-#     "resourceGroupName":"rg-t-avd",
-#     "labName":null
-# }
