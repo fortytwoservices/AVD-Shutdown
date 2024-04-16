@@ -11,19 +11,46 @@ and sends an email notification if any issues are detected.
 - Azure Virtual Desktop environment
 - Azure Function App
 - Azure AD App Registration or use the Managed Identity of the Function App.
-- A user account with permissions to send emails.
+- A user account to send emails with (I.e. "Notifications@fortytwo.io")
 
 ## Permissions required
 
 RBAC / IAM:
 
-- Reader on the Resource Group containing the AVD environment
+- Reader on the Resource Group containing the AVD environment (we recommend using the Mananged Identity of the Function App)
 
 API Permissions:
 
 - Microsoft Graph
   - User.Read
-  - Mail.Send
+  - Mail.Send (**[Implement RBAC for this permission!!](https://learn.microsoft.com/en-us/Exchange/permissions-exo/application-rbac)**)
+
+## Configuration
+
+Change the following variables in the script to match your environment.
+
+``` PowerShell
+# The tenant where the AVD environment is located
+$TenantId = "1284b95a-0570-4bf7-be1d-8d8ccca6e9cf"
+
+# The client ID and secret of the App registration used to authenticate - set blank if using Managed Identity
+$ClientId = ""
+$ClientSecret = ""
+# UPN of the sender user - the Appreg or Managed Identity must have the right to send email on behalf of this user
+$mailsender = "AVDNotifications@fortytwo.io"
+# Array of subscription IDs where we will look for hostpools
+$subscriptionid = @("1284b95a-0570-4bf7-be1d-8d8ccca6e9cg", "1284b95a-0570-4bf7-be1d-8d8ccca6e9ch") 
+
+# use the Managed Identity of the functionApp to query the API's and send email?
+# If set to false, use the App registration credentials above to authenticate
+# PS! The Managed Identity or App Registration must have the correct permissions.
+$useManagedIdentity = $true
+
+```
+
+### Sample email to the user
+
+![How the email to the users looks like](media/2024-04-16-11-46-15.png)
 
 ### Sample data from the webhook
 
