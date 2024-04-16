@@ -11,3 +11,8 @@ __azurite_db*__.json
 
 # vscode artifacts
 .vscode
+
+# terraform
+*.lock.hcl
+*.tfstate*
+.terraform*
