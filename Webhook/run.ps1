@@ -20,24 +20,25 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 Write-Host "[DEBUG] Powershell version is:" ($psversiontable).psversion
 
-# Variables
+# Variables -----------------------------------------------------------------------------------------------------------------------
+# This is read from the environment variables in the functionApp
 
 # The tenant where the AVD environment is located
-$TenantId = "1284b95a-0570-4bf7-be1d-8d8ccca6e9cf"
-
+$TenantId = $env:TenantId
 # The client ID and secret of the App registration used to authenticate - set blank if using Managed Identity
-$ClientId = ""
-$ClientSecret = ""
+$ClientId = $env:ClientId
+$ClientSecret = $env:ClientSecret
 # UPN of the sender user - the Appreg or Managed Identity must have the right to send email on behalf of this user
-$mailsender = "AVDNotifications@fortytwo.io"
+$mailsender = $env:mailsender
 # Array of subscription IDs where we will look for hostpools
-$subscriptionid = @("1284b95a-0570-4bf7-be1d-8d8ccca6e9cg", "1284b95a-0570-4bf7-be1d-8d8ccca6e9ch") 
-
+$subscriptionid = $env:subscriptionid -split ","
 # use the Managed Identity of the functionApp to query the API's and send email?
 # If set to false, use the App registration credentials above to authenticate
 # PS! The Managed Identity or App Registration must have the correct permissions.
-$useManagedIdentity = $true
+$useManagedIdentity = $env:useManagedIdentity
 
+
+# --------------------------------------------------------------------------------------------------------------------------------
 
 # Define/initialize lists
 $hostPoolList = [System.Collections.Generic.List[object]]::new()
