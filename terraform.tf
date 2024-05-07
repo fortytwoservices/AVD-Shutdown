@@ -108,12 +108,6 @@ resource "azurerm_linux_function_app" "functionapp" {
 
 }
 
-resource "azurerm_app_service_source_control" "deployment" {
-  app_id   = azurerm_linux_web_app.functionapp.id
-  repo_url = "https://github.com/fortytwoservices/AVD-ShutdownWebhook"
-  branch   = "main"
-}
-
 data "azurerm_subscription" "subscription" {
 }
 
